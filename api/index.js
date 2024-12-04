@@ -3,7 +3,8 @@ const app = express();
 import cors from "cors";
 import bodyParser from 'body-parser';
 import mongoose from "mongoose";
-import Transcation from './models/transcationmodel.js';
+// import Transcation from './models/transcationmodel.js';
+import route from './routes/apiroutes.js';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -21,69 +22,7 @@ mongoose.connect("mongodb+srv://dvrakshitha63:QQgqjG0w3JJu3CrV@cluster0.yyptv.mo
 })
 .catch((err)=> console.log(err));
 
-
-app.get("/api/test",(req,res)=>
-{
-    res.json("hello this is transcation");
-});
-
-
-app.post("/api/transaction/create", (req, res) => {
-    const { name,datetime, description ,price} = req.body;
-    const transaction = new Transcation({ name, datetime, description ,price});
-    transaction.save();
-    res.json(req.body);
-});
-
-app.get("/api/transcations",async (req,res)=>
-{
-   const result= await Transcation.find()
-   .then((result) => {res.json(result);})
-   .catch((err) => {console.log(err);})
-        
-});
-
-app.get("/api/transcations/:id",async (req,res)=>
-    {
-        const id=req.params.id;
-        const result= await Transcation.findById(id)
-       .then((result) => {res.json(result);})
-       .catch((err) => {console.log(err);})
-            
-    });
-
-app.put("/api/edit/:id", async (req, res) => {
-        const id = req.params.id;
-        try {
-          const result = await Transcation.findByIdAndUpdate(id, req.body, { new: true } );
-          if (!result) {
-            return res.status(404).json({ error: "Transaction not found" });
-          }
-          res.json(result);
-        } catch (err) {
-          console.error("Error updating transaction:", err);
-          res.status(500).json({ error: "Internal server error" });
-        }
-      });
-      
-    
-app.delete("/api/deleteOne/:id", async (req, res) => {
-        const id = req.params.id;
-        try {
-          const result = await Transcation.findByIdAndDelete(id);
-          if (!result) {
-            return res.status(404).json({ error: "Transaction not found" });
-          }
-          res.json({ message: "Transaction deleted successfully" });
-        } catch (err) {
-          console.error("Error deleting transaction:", err);
-          res.status(500).json({ error: "Internal server error" });
-        }
-      });
-      
-
-
-
+app.use("/api",route);
 
 
 //password:QQgqjG0w3JJu3CrV //ipaddress:(106.193.68.171//username:dvrakshitha63
